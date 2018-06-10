@@ -4797,7 +4797,7 @@
             this.OwnerBox.Name = "OwnerBox";
             this.OwnerBox.Size = new System.Drawing.Size(351, 21);
             this.OwnerBox.TabIndex = 214;
-            this.OwnerBox.Text = "Owner";
+            this.OwnerBox.Text = "Owner";         
             this.OwnerBox.TextChanged += new System.EventHandler(this.OwnerBox_TextChanged);
             // 
             // TerrainBox
@@ -4882,6 +4882,7 @@
             this.CapitalBox.TabIndex = 221;
             this.CapitalBox.Text = "Capital";
             this.CapitalBox.UseVisualStyleBackColor = true;
+            this.CapitalBox.CheckedChanged += new System.EventHandler(this.CapitalBox_CheckedChanged);
             // 
             // Form1
             // 

@@ -23,6 +23,7 @@ namespace History
                 Gaia.Name = "None";
                 Countries.Add(Gaia);
                 Gaia.Color = Color.Gray;
+
             }
             foreach (Label ctrl in Map.Controls)
             {
@@ -34,7 +35,8 @@ namespace History
                 prv.Development = 1;
                 prv.Fortifications = 0;
                 ctrl.Text = "#";
-                GetByObject(ctrl).Owner = GetByName("None");              
+                GetByObject(ctrl).Owner = GetByName("None");
+                GetByName("None").Land.Add(prv);
             }          
             TerrainBox.TextChanged += new EventHandler(TerrainChange);
             IEnumerable<Province> query = Provinces.OrderBy(n => n.ctrl.Name);
@@ -153,20 +155,21 @@ namespace History
                 WoodLabel.Text = "Hemps: " + Clicked.Storage["hemps"] + "/" + Clicked.Production["hemps"];
         }
         private void ProvinceClick(object sender, EventArgs e)
-        {                       
+        {
+           
             PrevClicked = Clicked;
             MapUpdate(mode, PrevClicked);
-            Current = (Label)sender;
-            OwnerBox.TextChanged -= OwnerBox_TextChanged;
-            TerrainBox.TextChanged -= TerrainChange;
-            DevelopmentBox.ValueChanged -= DevelopmentBox_ValueChanged;
-            FortificationsBox.ValueChanged -= FortificationsBox_ValueChanged;
+            Current = (Label)sender;          
             Clicked = GetByObject(Current);
             CapitalBox.Checked = false;
             if (Clicked.Owner.Name == "None")           
                 CapitalBox.Enabled = false;           
             else
                 CapitalBox.Enabled = true;
+            if (Clicked.Owner.Capital == Clicked)
+                CapitalBox.Checked = true;
+            else
+                CapitalBox.Checked = false;
             if (Clicked.Occ == null)
             {
                 OccupiedCheckBox.Checked = false;
@@ -190,10 +193,7 @@ namespace History
                 Clicked.Terrain = BrushTerrain.Text;
                 MapUpdate(0, Clicked);
             }
-            OwnerBox.TextChanged += OwnerBox_TextChanged;
-            TerrainBox.TextChanged += TerrainChange;
-            DevelopmentBox.ValueChanged += DevelopmentBox_ValueChanged;
-            FortificationsBox.ValueChanged += FortificationsBox_ValueChanged;
+            
 
         }
         public Province GetByObject(Label obj)
@@ -217,6 +217,11 @@ namespace History
         }
         public void MapUpdate(int mode, Province pro = null)
         {
+            OwnerBox.TextChanged -= OwnerBox_TextChanged;
+            TerrainBox.TextChanged -= TerrainChange;
+            DevelopmentBox.ValueChanged -= DevelopmentBox_ValueChanged;
+            FortificationsBox.ValueChanged -= FortificationsBox_ValueChanged;
+            CapitalBox.CheckedChanged -= CapitalBox_CheckedChanged;
             OwnerBox.Items.Clear();
             OwnerBox.Text = "";
             OccupantBox.Items.Clear();
@@ -308,6 +313,7 @@ namespace History
                         }
                         foreach(Country c in Countries)
                         {
+                            if(c.Name != "None" && c.Land.Count != 0)
                             c.Capital.ctrl.Text = c.Name;
                         }
                     }
@@ -321,6 +327,11 @@ namespace History
                     }
                     break;
             }
+            OwnerBox.TextChanged += OwnerBox_TextChanged;
+            TerrainBox.TextChanged += TerrainChange;
+            DevelopmentBox.ValueChanged += DevelopmentBox_ValueChanged;
+            FortificationsBox.ValueChanged += FortificationsBox_ValueChanged;
+            CapitalBox.CheckedChanged += CapitalBox_CheckedChanged;
         }
         private void TerrainButton_Click(object sender, EventArgs e)
         {
@@ -366,9 +377,15 @@ namespace History
             }
         }
         private void OwnerBox_TextChanged(object sender, EventArgs e)
-        {           
-            if(OwnerBox.Text != "")
-            Clicked.Owner = GetByName(OwnerBox.Text);
+        {
+            if (Clicked.Owner.Land.Count == 0)
+                Clicked.Owner.Capital = Clicked;
+            if (OwnerBox.Text != "")
+            {
+                Clicked.Owner = GetByName(OwnerBox.Text);
+                GetByName(OwnerBox.Text).Land.Add(Clicked);
+            }
+            
         }
 
         private void OccupantBox_SelectedTextChanged(object sender, EventArgs e)
@@ -431,10 +448,17 @@ namespace History
             }
             return ls;
         }
+
+        private void CapitalBox_CheckedChanged(object sender, EventArgs e)
+        {
+            Clicked.Owner.Capital = Clicked;
+            CapitalBox.Enabled = false;
+        }
+       
     }
     public class Country
     {
-        public List<Province> Land { get; set; }
+        public List<Province> Land { get; set; } = new List<Province>();
         public string Name { get; set; }
         public string CurrentRuler { get; set; }
         public string AlternateRuler { get; set; }
