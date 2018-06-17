@@ -17,6 +17,13 @@ namespace History
         public Form1()
         {
             InitializeComponent();
+            PlayerInventory.Clear();
+            foreach(string s in ProductName)
+            {
+                PlayerInventory.Add(s, 0);
+            }
+           
+
             if (!Countries.Any())
             {
                 Country Gaia = new Country();
@@ -25,6 +32,8 @@ namespace History
                 Gaia.Color = Color.Gray;
 
             }
+            if (!Provinces.Any())
+                { 
             foreach (Label ctrl in Map.Controls)
             {
                 MakeHex(ctrl);
@@ -37,13 +46,44 @@ namespace History
                 ctrl.Text = "#";
                 GetByObject(ctrl).Owner = GetByName("None");
                 GetByName("None").Land.Add(prv);
-            }          
+                prv.Occ = null;
+            }
+        }
             TerrainBox.TextChanged += new EventHandler(TerrainChange);
             IEnumerable<Province> query = Provinces.OrderBy(n => n.ctrl.Name);
             Provinces = query.ToList();
             PlayerCurrent = Provinces[150];
-
+            Provinces[150].Terrain = "grassland";
+            Tabs.SelectedIndexChanged += Tabs_TabIndexChanged;
+            foreach(Province pr in GetSurrounding(Provinces[150]))
+            {
+                pr.Terrain = "grassland";
+            }
+            Prices.Add("wood", 50);
+            Prices.Add("bricks", 75);
+            Prices.Add("wheat", 40);
+            Prices.Add("metals", 200);
+            Prices.Add("tools", 350);
+            Prices.Add("weapons", 500);
+            Prices.Add("wool", 100);
+            Prices.Add("cloth", 400);
+            Prices.Add("furs", 300);
+            Prices.Add("ale", 175);
+            Prices.Add("wine", 300);
+            Prices.Add("spices", 700);
+            Prices.Add("salt", 150);
+            Prices.Add("hemps", 100);
         }
+
+        private void Tabs_TabIndexChanged(object sender, EventArgs e)
+        {
+            if(Tabs.SelectedTab == PlayerPage)
+            {
+                InventroyLabel.Text = "Wood: " + PlayerInventory["wood"] + "\nBricks: " + PlayerInventory["bricks"] + "\nWheat: " + PlayerInventory["wheat"] + "\nMetals: " +PlayerInventory["metals"] + "\nTools: " + PlayerInventory["tools"] + "\nWeapons: " + PlayerInventory["weapons"] + "\nWool: " + PlayerInventory["wool"] + "\nCloth: " + PlayerInventory["cloth"] + "\nFurs: " + PlayerInventory["furs"] + "\nAle: " + PlayerInventory["ale"] + "\nWine: " + PlayerInventory["wine"] + "\nSpices: " + PlayerInventory["spices"] + "\nSalt: " + PlayerInventory["salt"] + "\nHemps: " + PlayerInventory["hemps"];
+                
+            }
+        }
+
         public static List<Province> Provinces = new List<Province> { };
       
         private void MakeHex(Control Button)
@@ -67,12 +107,17 @@ namespace History
             points[5] = new Point(container.Left, container.Top + half);
             return points;
         }
-        
+        public Dictionary<string, int> PlayerInventory = new Dictionary<string, int>();
+        public Dictionary<string, int> Prices = new Dictionary<string, int>();
+        public static string[] ProductName = new string[] {"wood", "bricks", "wheat", "metals", "tools",
+            "weapons","wool", "cloth", "furs", "ale", "wine", "spices", "salt", "hemps"};
+        public static int Gold;
         public static int idstore = 0;
+        public static int MovePoints = 3;
         public static bool BrushFlag = false;
         public static Label Current;
         public static Province Clicked;
-        public static Province PrevClicked;
+        public static Province PrevClicked;      
         public static List<Country> Countries = new List<Country>();
         public static int mode = 0;
         public int Year;
@@ -85,83 +130,77 @@ namespace History
                 WoodLabel.Text = "Wood: " + Clicked.Storage["wood"] + "/" + Clicked.Production["wood"];
 
             if (Clicked.Production["bricks"] >= 0)
-                WoodLabel.Text = "Bricks: " + Clicked.Storage["bricks"] + "/+" + Clicked.Production["bricks"];
+                BricksLabel.Text = "Bricks: " + Clicked.Storage["bricks"] + "/+" + Clicked.Production["bricks"];
             else
-                WoodLabel.Text = "Bricks: " + Clicked.Storage["bricks"] + "/" + Clicked.Production["bricks"];
+                BricksLabel.Text = "Bricks: " + Clicked.Storage["bricks"] + "/" + Clicked.Production["bricks"];
 
             if (Clicked.Production["wheat"] >= 0)
-                WoodLabel.Text = "Wheat: " + Clicked.Storage["wheat"] + "/+" + Clicked.Production["wheat"];
+                WheatLabel.Text = "Wheat: " + Clicked.Storage["wheat"] + "/+" + Clicked.Production["wheat"];
             else
-                WoodLabel.Text = "Wheat: " + Clicked.Storage["wheat"] + "/" + Clicked.Production["wheat"];
+                WheatLabel.Text = "Wheat: " + Clicked.Storage["wheat"] + "/" + Clicked.Production["wheat"];
 
             if (Clicked.Production["metals"] >= 0)
-                WoodLabel.Text = "Metals: " + Clicked.Storage["metals"] + "/+" + Clicked.Production["metals"];
+                MetalsLabel.Text = "Metals: " + Clicked.Storage["metals"] + "/+" + Clicked.Production["metals"];
             else
-                WoodLabel.Text = "Metals: " + Clicked.Storage["metals"] + "/" + Clicked.Production["metals"];
+                MetalsLabel.Text = "Metals: " + Clicked.Storage["metals"] + "/" + Clicked.Production["metals"];
 
             if (Clicked.Production["tools"] >= 0)
-                WoodLabel.Text = "Tools: " + Clicked.Storage["tools"] + "/+" + Clicked.Production["tools"];
+                ToolsLabel.Text = "Tools: " + Clicked.Storage["tools"] + "/+" + Clicked.Production["tools"];
             else
-                WoodLabel.Text = "Tools: " + Clicked.Storage["tools"] + "/" + Clicked.Production["tools"];
-
-            if (Clicked.Production["tools"] >= 0)
-                WoodLabel.Text = "Tools: " + Clicked.Storage["tools"] + "/+" + Clicked.Production["tools"];
-            else
-                WoodLabel.Text = "Tools: " + Clicked.Storage["tools"] + "/" + Clicked.Production["tools"];
+                ToolsLabel.Text = "Tools: " + Clicked.Storage["tools"] + "/" + Clicked.Production["tools"];
 
             if (Clicked.Production["weapons"] >= 0)
-                WoodLabel.Text = "Weapons: " + Clicked.Storage["weapons"] + "/+" + Clicked.Production["weapons"];
+                WeaponsLabel.Text = "Weapons: " + Clicked.Storage["weapons"] + "/+" + Clicked.Production["weapons"];
             else
-                WoodLabel.Text = "Weapons: " + Clicked.Storage["weapons"] + "/" + Clicked.Production["weapons"];
+                WeaponsLabel.Text = "Weapons: " + Clicked.Storage["weapons"] + "/" + Clicked.Production["weapons"];
 
             if (Clicked.Production["wool"] >= 0)
-                WoodLabel.Text = "Wool: " + Clicked.Storage["wool"] + "/+" + Clicked.Production["wool"];
+                WoolLabel.Text = "Wool: " + Clicked.Storage["wool"] + "/+" + Clicked.Production["wool"];
             else
-                WoodLabel.Text = "Wool: " + Clicked.Storage["Wool"] + "/" + Clicked.Production["wool"];
+                WoolLabel.Text = "Wool: " + Clicked.Storage["Wool"] + "/" + Clicked.Production["wool"];
 
             if (Clicked.Production["cloth"] >= 0)
-                WoodLabel.Text = "Cloth: " + Clicked.Storage["cloth"] + "/+" + Clicked.Production["cloth"];
+                ClothLabel.Text = "Cloth: " + Clicked.Storage["cloth"] + "/+" + Clicked.Production["cloth"];
             else
-                WoodLabel.Text = "Cloth: " + Clicked.Storage["cloth"] + "/" + Clicked.Production["cloth"];
+                ClothLabel.Text = "Cloth: " + Clicked.Storage["cloth"] + "/" + Clicked.Production["cloth"];
 
             if (Clicked.Production["furs"] >= 0)
-                WoodLabel.Text = "Furs: " + Clicked.Storage["furs"] + "/+" + Clicked.Production["furs"];
+                FursLabel.Text = "Furs: " + Clicked.Storage["furs"] + "/+" + Clicked.Production["furs"];
             else
-                WoodLabel.Text = "Furs: " + Clicked.Storage["furs"] + "/" + Clicked.Production["furs"];
+                FursLabel.Text = "Furs: " + Clicked.Storage["furs"] + "/" + Clicked.Production["furs"];
 
             if (Clicked.Production["ale"] >= 0)
-                WoodLabel.Text = "Ale: " + Clicked.Storage["ale"] + "/+" + Clicked.Production["ale"];
+                BeerLabel.Text = "Ale: " + Clicked.Storage["ale"] + "/+" + Clicked.Production["ale"];
             else
-                WoodLabel.Text = "Ale: " + Clicked.Storage["ale"] + "/" + Clicked.Production["ale"];
+                BeerLabel.Text = "Ale: " + Clicked.Storage["ale"] + "/" + Clicked.Production["ale"];
 
             if (Clicked.Production["wine"] >= 0)
-                WoodLabel.Text = "Wine: " + Clicked.Storage["wine"] + "/+" + Clicked.Production["wine"];
+                WineLabel.Text = "Wine: " + Clicked.Storage["wine"] + "/+" + Clicked.Production["wine"];
             else
-                WoodLabel.Text = "Wine: " + Clicked.Storage["wine"] + "/" + Clicked.Production["wine"];
+                WineLabel.Text = "Wine: " + Clicked.Storage["wine"] + "/" + Clicked.Production["wine"];
 
             if (Clicked.Production["spices"] >= 0)
-                WoodLabel.Text = "Spices: " + Clicked.Storage["spices"] + "/+" + Clicked.Production["spices"];
+                SpicesLabel.Text = "Spices: " + Clicked.Storage["spices"] + "/+" + Clicked.Production["spices"];
             else
-                WoodLabel.Text = "Spices: " + Clicked.Storage["spices"] + "/" + Clicked.Production["spices"];
+                SpicesLabel.Text = "Spices: " + Clicked.Storage["spices"] + "/" + Clicked.Production["spices"];
 
             if (Clicked.Production["salt"] >= 0)
-                WoodLabel.Text = "Salt: " + Clicked.Storage["salt"] + "/+" + Clicked.Production["salt"];
+                SaltLabel.Text = "Salt: " + Clicked.Storage["salt"] + "/+" + Clicked.Production["salt"];
             else
-                WoodLabel.Text = "Salt: " + Clicked.Storage["salt"] + "/" + Clicked.Production["salt"];
+                SaltLabel.Text = "Salt: " + Clicked.Storage["salt"] + "/" + Clicked.Production["salt"];
 
             if (Clicked.Production["hemps"] >= 0)
-                WoodLabel.Text = "Hemps: " + Clicked.Storage["hemps"] + "/+" + Clicked.Production["hemps"];
+                HempsLabel.Text = "Hemps: " + Clicked.Storage["hemps"] + "/+" + Clicked.Production["hemps"];
             else
-                WoodLabel.Text = "Hemps: " + Clicked.Storage["hemps"] + "/" + Clicked.Production["hemps"];
+                HempsLabel.Text = "Hemps: " + Clicked.Storage["hemps"] + "/" + Clicked.Production["hemps"];
         }
         private void ProvinceClick(object sender, EventArgs e)
-        {
-           
+        {           
             PrevClicked = Clicked;
             MapUpdate(mode, PrevClicked);
             Current = (Label)sender;          
             Clicked = GetByObject(Current);
-            CapitalBox.Checked = false;
+            
             if (Clicked.Owner.Name == "None")           
                 CapitalBox.Enabled = false;           
             else
@@ -186,7 +225,16 @@ namespace History
                 Current.BackColor = Color.Aquamarine;
                 id.Text = "Id:" + Provinces.IndexOf(Clicked);
                 DevelopmentBox.Value = Clicked.Development;
-                FortificationsBox.Value = Clicked.Fortifications;              
+                FortificationsBox.Value = Clicked.Fortifications;
+                UpdateProductionStorage();
+                if(GetSurrounding(PlayerCurrent).Contains(Clicked) && Clicked.Terrain != "water" && MovePoints > 0)
+                {
+                    MoveButton.Enabled = true;
+                }
+                else
+                {
+                    MoveButton.Enabled = false;
+                }
             }
             else
             {
@@ -196,6 +244,10 @@ namespace History
             
 
         }
+       
+
+
+        
         public Province GetByObject(Label obj)
         {
             IEnumerable<Province> query = from n in Provinces
@@ -222,6 +274,9 @@ namespace History
             DevelopmentBox.ValueChanged -= DevelopmentBox_ValueChanged;
             FortificationsBox.ValueChanged -= FortificationsBox_ValueChanged;
             CapitalBox.CheckedChanged -= CapitalBox_CheckedChanged;
+            CapitalBox.Enabled = true;
+            CapitalBox.Checked = false;
+            CapitalBox.Enabled = false;
             OwnerBox.Items.Clear();
             OwnerBox.Text = "";
             OccupantBox.Items.Clear();
@@ -308,13 +363,27 @@ namespace History
                             if (pr.Terrain == "water")
                                 pr.ctrl.BackColor = Color.Blue;
                             else
+                            {
+                                pr.ctrl.Text = "#";
                                 pr.ctrl.BackColor = pr.Owner.Color;
-                            pr.ctrl.Text = "#";
+                                if (pr.Occ != null)
+                                {
+                                    pr.ctrl.Text = "@";
+                                    pr.ctrl.ForeColor = pr.Occ.Color;
+                                }                                
+                            }                            
                         }
                         foreach(Country c in Countries)
                         {
-                            if(c.Name != "None" && c.Land.Count != 0)
-                            c.Capital.ctrl.Text = c.Name;
+                            try
+                            {
+                                if (c.Name != "None" && c.Land.Count != 0)
+                                    c.Capital.ctrl.Text = c.Name;
+                            }
+                            catch
+                            {
+                                MessageBox.Show("Country of " + c.Name + " doesn't have a capital!");
+                            }
                         }
                     }
                     else
@@ -322,11 +391,20 @@ namespace History
                         if (pro.Terrain == "water")
                             pro.ctrl.BackColor = Color.Blue;
                         else
+                        {
+                            pro.ctrl.Text = "#";
                             pro.ctrl.BackColor = pro.Owner.Color;
-
+                            if (pro.Occ != null)
+                            {
+                                pro.ctrl.Text = "@";
+                                pro.ctrl.ForeColor = pro.Occ.Color;
+                            }                            
+                        }
+                       
                     }
                     break;
             }
+            MovePointsLabel.Text = "Move Points: " + MovePoints;
             OwnerBox.TextChanged += OwnerBox_TextChanged;
             TerrainBox.TextChanged += TerrainChange;
             DevelopmentBox.ValueChanged += DevelopmentBox_ValueChanged;
@@ -416,45 +494,80 @@ namespace History
         private List<Province> GetSurrounding(Province pr,string Border = "all")
         {
             int index = Provinces.IndexOf(pr);
-            List<Province> ls = new List<Province>();
+            List<Province> ls = new List<Province>();          
             switch (Border)
             {
                 case "all":
-                    ls.Add(Provinces[index - 24]);
-                    ls.Add(Provinces[index - 11]);
-                    ls.Add(Provinces[index + 13]);
-                    ls.Add(Provinces[index + 24]);
-                    ls.Add(Provinces[index + 12]);
-                    ls.Add(Provinces[index - 12]);
+                    ls.Add(GetByObject(GetByLocation(pr.ctrl.Location.X, pr.ctrl.Location.Y - 50)));
+                    ls.Add(GetByObject(GetByLocation(pr.ctrl.Location.X + 38, pr.ctrl.Location.Y - 25)));
+                    ls.Add(GetByObject(GetByLocation(pr.ctrl.Location.X + 38, pr.ctrl.Location.Y + 25)));
+                    ls.Add(GetByObject(GetByLocation(pr.ctrl.Location.X, pr.ctrl.Location.Y + 50)));
+                    ls.Add(GetByObject(GetByLocation(pr.ctrl.Location.X -38, pr.ctrl.Location.Y +25)));
+                    ls.Add(GetByObject(GetByLocation(pr.ctrl.Location.X -38, pr.ctrl.Location.Y - 25)));
                     break;
                 case "n":
-                    ls.Add(Provinces[index - 24]);
+                    ls.Add(GetByObject(GetByLocation(pr.ctrl.Location.X, pr.ctrl.Location.Y - 50)));
                     break;
                 case "ne":
-                    ls.Add(Provinces[index - 11]);
+                    ls.Add(GetByObject(GetByLocation(pr.ctrl.Location.X +38, pr.ctrl.Location.Y - 25)));
                     break;
                 case "se":
-                    ls.Add(Provinces[index + 13]);
+                    ls.Add(GetByObject(GetByLocation(pr.ctrl.Location.X +38, pr.ctrl.Location.Y +25)));
                     break;
                 case "s":
-                    ls.Add(Provinces[index + 24]);
+                    ls.Add(GetByObject(GetByLocation(pr.ctrl.Location.X, pr.ctrl.Location.Y + 50)));
                     break;
                 case "sw":
-                    ls.Add(Provinces[index + 12]);
+                    ls.Add(GetByObject(GetByLocation(pr.ctrl.Location.X - 38, pr.ctrl.Location.Y + 25)));
                     break;
-                case "nw":
-                    ls.Add(Provinces[index - 12]);
+                case "sn":
+                    ls.Add(GetByObject(GetByLocation(pr.ctrl.Location.X - 38, pr.ctrl.Location.Y - 25)));
                     break;
             }
             return ls;
         }
-
+        private Label GetByLocation(int x, int y)
+        {
+            List<Label>lb = new List<Label>();
+            foreach(Label lab in Map.Controls)
+            {
+                lb.Add(lab);
+            }
+            IEnumerable<Label> query = from n in lb
+                                         where n.Location.X == x
+                                         where n.Location.Y == y                                         
+                                         select n;
+            return query.ElementAt(0);
+        }
         private void CapitalBox_CheckedChanged(object sender, EventArgs e)
         {
             Clicked.Owner.Capital = Clicked;
             CapitalBox.Enabled = false;
         }
-       
+
+        private void MoveButton_Click(object sender, EventArgs e)
+        {
+            PlayerCurrent = Clicked;
+            MovePoints -= 1;
+            MapUpdate(mode);
+            MoveButton.Enabled = false;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if(Clicked.Development >= 5)
+                    Clicked.CreateCity();
+                else               
+                    MessageBox.Show("Cities need at least 5 development!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UpdateProductionStorage();
+            }
+            catch
+            {
+                MessageBox.Show("No province has been selected!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
     public class Country
     {
@@ -485,13 +598,14 @@ namespace History
         public int Fortifications { get; set; }
         public int Development { get; set; }
         public Country Owner { get; set; }
+        public double Hungry { get; set; }
         public Country Occ { get; set; }
         public Dictionary<string, int> Production { get; set; } = new Dictionary<string, int>();
         public Dictionary<string, int> Storage { get; set; } = new Dictionary<string, int>();
+        public Dictionary<string, int> BProduction { get; set; } = new Dictionary<string, int>();
         public Province(Label Lb)
         {
             ctrl = Lb;
-            
             ID = Form1.idstore;
             Form1.idstore++;
             ProvinceName = "None";
@@ -501,8 +615,8 @@ namespace History
             Storage.Add("bricks", 0);
             Production.Add("wheat", 0);
             Storage.Add("wheat", 0);
-            Production.Add("iron", 0);
-            Storage.Add("iron", 0);
+            Production.Add("metals", 0);
+            Storage.Add("metals", 0);
             Production.Add("tools", 0);
             Storage.Add("tools", 0);
             Production.Add("weapons", 0);
@@ -517,16 +631,57 @@ namespace History
             Storage.Add("ale", 0);
             Production.Add("wine", 0);
             Storage.Add("wine", 0);
-            Production.Add("spieces", 0);
-            Storage.Add("spieces", 0);
+            Production.Add("spices", 0);
+            Storage.Add("spices", 0);
             Production.Add("meat", 0);
             Storage.Add("meat", 0);
             Production.Add("salt", 0);
             Storage.Add("salt", 0);
             Production.Add("hemps", 0);
             Storage.Add("hemps", 0);
-
+            BProduction = Production;
         }
+        public void CreateCity()
+        {
+            Random rand = new Random();
+            foreach (string s in Form1.ProductName)
+            {
+                Production[s] = rand.Next(0, 21);
+            }
+            for (int a = 0; a < 5; a++)
+            {
+                Production[Form1.ProductName[rand.Next(0, Form1.ProductName.Length)]] += 5;
+            }
+        }
+        public void CityTurn()
+        {
+            if (Development > 5)
+            {
+                foreach(string s in Form1.ProductName)
+                {
+                    Storage[s] += BProduction[s];
+                    if(Storage[s] < 0)
+                    {
+                        Storage[s] = 0;
+                    }
+                }
+
+                int food = Storage["wheat"] + Storage["meat"];
+                food -= Development * 5;
+                if(food < 0)
+                {
+                    Hungry = food * -0.5;
+                    food = 0;
+                }
+                else
+                {
+                    Hungry = 0;
+                }
+                if (Hungry >= 0.25)
+                    Development -= 1;
+            }
+        }
+
     }
 }
 /*Production list
