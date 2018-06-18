@@ -442,6 +442,7 @@
             this.Inventory = new System.Windows.Forms.GroupBox();
             this.InventroyLabel = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.MeatLabel = new System.Windows.Forms.Label();
             this.panel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FortificationsBox)).BeginInit();
@@ -639,6 +640,7 @@
             // 
             // ProductionBox
             // 
+            this.ProductionBox.Controls.Add(this.MeatLabel);
             this.ProductionBox.Controls.Add(this.HempsLabel);
             this.ProductionBox.Controls.Add(this.SaltLabel);
             this.ProductionBox.Controls.Add(this.SpicesLabel);
@@ -663,7 +665,7 @@
             // HempsLabel
             // 
             this.HempsLabel.AutoSize = true;
-            this.HempsLabel.Location = new System.Drawing.Point(251, 173);
+            this.HempsLabel.Location = new System.Drawing.Point(166, 173);
             this.HempsLabel.Name = "HempsLabel";
             this.HempsLabel.Size = new System.Drawing.Size(63, 13);
             this.HempsLabel.TabIndex = 13;
@@ -672,7 +674,7 @@
             // SaltLabel
             // 
             this.SaltLabel.AutoSize = true;
-            this.SaltLabel.Location = new System.Drawing.Point(251, 148);
+            this.SaltLabel.Location = new System.Drawing.Point(166, 148);
             this.SaltLabel.Name = "SaltLabel";
             this.SaltLabel.Size = new System.Drawing.Size(48, 13);
             this.SaltLabel.TabIndex = 12;
@@ -681,7 +683,7 @@
             // SpicesLabel
             // 
             this.SpicesLabel.AutoSize = true;
-            this.SpicesLabel.Location = new System.Drawing.Point(251, 124);
+            this.SpicesLabel.Location = new System.Drawing.Point(166, 124);
             this.SpicesLabel.Name = "SpicesLabel";
             this.SpicesLabel.Size = new System.Drawing.Size(62, 13);
             this.SpicesLabel.TabIndex = 11;
@@ -690,7 +692,7 @@
             // WineLabel
             // 
             this.WineLabel.AutoSize = true;
-            this.WineLabel.Location = new System.Drawing.Point(251, 99);
+            this.WineLabel.Location = new System.Drawing.Point(166, 99);
             this.WineLabel.Name = "WineLabel";
             this.WineLabel.Size = new System.Drawing.Size(55, 13);
             this.WineLabel.TabIndex = 10;
@@ -699,7 +701,7 @@
             // BeerLabel
             // 
             this.BeerLabel.AutoSize = true;
-            this.BeerLabel.Location = new System.Drawing.Point(251, 74);
+            this.BeerLabel.Location = new System.Drawing.Point(166, 74);
             this.BeerLabel.Name = "BeerLabel";
             this.BeerLabel.Size = new System.Drawing.Size(52, 13);
             this.BeerLabel.TabIndex = 9;
@@ -708,7 +710,7 @@
             // FursLabel
             // 
             this.FursLabel.AutoSize = true;
-            this.FursLabel.Location = new System.Drawing.Point(251, 49);
+            this.FursLabel.Location = new System.Drawing.Point(166, 49);
             this.FursLabel.Name = "FursLabel";
             this.FursLabel.Size = new System.Drawing.Size(50, 13);
             this.FursLabel.TabIndex = 8;
@@ -717,7 +719,7 @@
             // ClothLabel
             // 
             this.ClothLabel.AutoSize = true;
-            this.ClothLabel.Location = new System.Drawing.Point(251, 25);
+            this.ClothLabel.Location = new System.Drawing.Point(166, 25);
             this.ClothLabel.Name = "ClothLabel";
             this.ClothLabel.Size = new System.Drawing.Size(54, 13);
             this.ClothLabel.TabIndex = 7;
@@ -4980,7 +4982,7 @@
             this.Inventory.Controls.Add(this.InventroyLabel);
             this.Inventory.Location = new System.Drawing.Point(6, 8);
             this.Inventory.Name = "Inventory";
-            this.Inventory.Size = new System.Drawing.Size(135, 207);
+            this.Inventory.Size = new System.Drawing.Size(135, 229);
             this.Inventory.TabIndex = 0;
             this.Inventory.TabStop = false;
             this.Inventory.Text = "Player Inventory";
@@ -4998,10 +5000,19 @@
             // 
             this.groupBox2.Location = new System.Drawing.Point(147, 8);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(360, 207);
+            this.groupBox2.Size = new System.Drawing.Size(360, 229);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Buy/Sell";
+            // 
+            // MeatLabel
+            // 
+            this.MeatLabel.AutoSize = true;
+            this.MeatLabel.Location = new System.Drawing.Point(267, 25);
+            this.MeatLabel.Name = "MeatLabel";
+            this.MeatLabel.Size = new System.Drawing.Size(54, 13);
+            this.MeatLabel.TabIndex = 14;
+            this.MeatLabel.Text = "Meat: 0/0";
             // 
             // Form1
             // 
@@ -5453,5 +5464,6 @@
         private System.Windows.Forms.GroupBox Inventory;
         private System.Windows.Forms.Label InventroyLabel;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label MeatLabel;
     }
 }
