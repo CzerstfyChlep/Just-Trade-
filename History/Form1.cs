@@ -84,12 +84,95 @@ namespace History
                 InventroyLabel.Text = "Wood: " + PlayerInventory["wood"] + "\nBricks: " + PlayerInventory["bricks"] + "\nWheat: " + PlayerInventory["wheat"] + "\nMeat: " + PlayerInventory["meat"] + "\nMetals: " + PlayerInventory["metals"] + "\nTools: " + PlayerInventory["tools"] + "\nWeapons: " + PlayerInventory["weapons"] + "\nWool: " + PlayerInventory["wool"] + "\nCloth: " + PlayerInventory["cloth"] + "\nFurs: " + PlayerInventory["furs"] + "\nAle: " + PlayerInventory["ale"] + "\nWine: " + PlayerInventory["wine"] + "\nSpices: " + PlayerInventory["spices"] + "\nSalt: " + PlayerInventory["salt"] + "\nHemps: " + PlayerInventory["hemps"];
                 #region woodUpdateBuySell                
                 WoodStorageLabel.Text = "City storage: " + Clicked.Storage["wood"];
-                WoodTrackBar.Maximum = Clicked.Development * 20;
-                WoodTrackBar.Value = Clicked.Storage["wood"];
+                WoodTrackBar.Maximum = (int)Math.Round(Clicked.Population.Count * 0.05);
+                WoodShortageBar.Value = Clicked.Shortage["wood"];
+                try
+                {
+                    WoodStorageBar.Value = Clicked.Storage["wood"];
+                }
+                catch
+                {
+                    WoodStorageBar.Value = WoodStorageBar.Maximum;
+                }
                 #endregion
             }
         }
+        private void WoodBuySellBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            WoodTrackBar.Value = 0;
+            switch (WoodBuySellBox.Text)
+            {
+                case "Buy":
+                    WoodTrackBar.Maximum = Clicked.Storage["wood"];
+                    break;
+                case "Sell":
+                    WoodTrackBar.Maximum = PlayerInventory["wood"];
+                    break;
+            }
+        }
+        /*
+    Prices:
 
+    if shortage
+    + 10% for every shortage point
+    
+    if production last turn was on -
+    +10%
+    else
+    -10%
+
+    city needs = 100%
+    price - 50%
+    city needs = 0%
+    price + 50%
+
+ */
+        private void WoodTrackBar_Scroll(object sender, EventArgs e)
+        {
+            int NewStorage = Clicked.Storage["wood"];
+            WoodNumberLabel.Text = WoodTrackBar.Value.ToString();
+            int price = 0;
+            int WoodNeededToEndShortage = (int)Math.Round(Clicked.Population.Count * 0.01);
+            for (int n = 0; n < WoodTrackBar.Value; n++)
+            {
+                int addtoprice = 0;             
+                if(Clicked.Shortage["wood"] > 0 && NewStorage < WoodNeededToEndShortage)
+                {
+                    addtoprice = (int)(Prices["wood"] + Math.Round(Prices["wood"] * (0.1 * Clicked.Shortage["wood"])));                    
+                }
+                else
+                {
+                    addtoprice = Prices["wood"];
+                }
+                if(Clicked.Production["wood"] < 0)
+                {
+                    addtoprice += (int)Math.Round(Prices["wood"] * 0.1);
+                }
+                else if(Clicked.Production["wood"] == 0)
+                {
+                    addtoprice += (int)Math.Round(Prices["wood"] * 0.05);
+                }
+                else
+                {
+                    addtoprice -= (int)Math.Round(Prices["wood"] * 0.1);
+                }
+                double percentage = 0;
+                if (WoodStorageBar.Maximum >= NewStorage)
+                {
+                    percentage = NewStorage / WoodStorageBar.Maximum;
+                }
+                else
+                {
+                    percentage = -(WoodStorageBar.Maximum / NewStorage);
+                }
+                percentage /= 2;
+                addtoprice += (int)Math.Round(Prices["wood"] * percentage);
+                price += addtoprice;
+                NewStorage--;
+            }
+            WoodPriceLabel.Text = "Price: " + price;
+
+        }
         public static List<Province> Provinces = new List<Province> { };
 
         private void MakeHex(Control Button)
@@ -258,7 +341,17 @@ namespace History
         }
 
 
+        public void CountPrice(string product = "all")
+        {
+            switch (product)
+            {
+                case "all":
 
+                    break;
+                case "wood":
+                    break;
+            }
+        }
 
         public Province GetByObject(Label obj)
         {
@@ -598,6 +691,7 @@ namespace History
                 CreateCity cc = new CreateCity(Clicked);
                 cc.ShowDialog();
                 UpdateProductionStorage();
+                Clicked.Storage["wood"] = 30;
                 
             }
             catch
@@ -609,7 +703,21 @@ namespace History
             
         }
 
-       
+        private void button2_Click(object sender, EventArgs e)
+        {
+            foreach (Province p in Provinces)
+            {
+                try
+                {
+                    p.CityTurn();
+                }
+                catch
+                {
+
+                }
+                
+            }
+        }
     }
     public class Country
         {
@@ -636,6 +744,10 @@ namespace History
         public double age { get; set; }
         public string Job { get; set; }
         public int hunger { get; set; }
+        public void Dispose()
+        {
+            Dispose();
+        }
         public Human()
         {
             age = 0;
@@ -702,36 +814,18 @@ namespace History
                 Storage.Add("salt", 0);
                 Production.Add("hemps", 0);
                 Storage.Add("hemps", 0);
-                BProduction = Production;
-                Buildings = Production;
-                Shortage = Production;
+                              
+                foreach(string s in Form1.ProductName)
+            {
+                BProduction.Add(s, 0);
+                Shortage.Add(s, 0);
+                Buildings.Add(s, 0);
+            }
                 WarMode = false;
 
-            }
-            public void CreateCity()
-            {
-                Random rand = new Random();
-                foreach (string s in Form1.ProductName)
-                {
-                    if (s != "tools" && s != "weapons" && s != "cloth" && s != "ale")
-                        BProduction[s] = rand.Next(0, 21);
-
-                }
-                for (int a = 0; a < 5; a++)
-                {
-                    start:
-                    int random = rand.Next(0, Form1.ProductName.Length);
-                    if (Form1.ProductName[random] != "tools" && Form1.ProductName[random] != "weapons" && Form1.ProductName[random] != "cloth" && Form1.ProductName[random] != "ale")
-                        BProduction[Form1.ProductName[random]] += 5;
-                    else
-                        goto start;
-
-                }
-            }
+            }          
             public void CityTurn()
-            {
-                if (Development > 5)
-                {
+            {                
                     foreach (string key in Buildings.Keys)
                     {
                         
@@ -867,16 +961,24 @@ namespace History
                         Storage[s] += Production[s];
                         if (Storage[s] < 0)
                         {
-                            Shortage[s] -= (int)Math.Ceiling((double)Storage[s] / 2);
+                            Shortage[s]++;
+                        if(Shortage[s] > 4)
+                        {
+                            Shortage[s] = 4;
+                        }
                             Storage[s] = 0;
                         }
+                    else
+                    {
+                        Shortage[s]--;
+                    }
                     }
                     #region Buildings
 
                     #endregion
                     #region Food
                     Food:
-                    int FoodNeeded = Development * 5;
+                    int FoodNeeded = (int)Math.Round(Population.Count * 0.01);
                     int MeatFood = Storage["meat"] * 2;
                     int WheatFood = Storage["wheat"];
                     if (FoodNeeded <= MeatFood)
@@ -900,16 +1002,44 @@ namespace History
                         FoodNeeded -= MeatFood + WheatFood;
                         Storage["meat"] = 0;
                         Storage["wheat"] = 0;
-                        Hungry = FoodNeeded / AF;
-                        if (Hungry > 0.33)
+                        FoodNeeded *= 100;
+                        for (;FoodNeeded != 0; FoodNeeded--)
                         {
-                            Development -= 1;
+                            IEnumerable<Human> ZeroHunger = from n in Population
+                                                            where n.hunger < 1
+                                                            select n;
+                            if(ZeroHunger.Any())
+                                ZeroHunger.First().hunger++;
+                        else
+                        {
+                            IEnumerable<Human> OneHunger = from n in Population
+                                                            where n.hunger == 1
+                                                            select n;
+                            if (OneHunger.Any())
+                                OneHunger.First().hunger++;
+                            else
+                            {
+                                IEnumerable<Human> TwoHunger = from n in Population
+                                                               where n.hunger == 2
+                                                               select n;
+                                if (TwoHunger.Any())
+                                    TwoHunger.First().hunger++;
+                                else
+                                {
+                                    IEnumerable<Human> ThreeHunger = from n in Population
+                                                                   where n.hunger == 3
+                                                                   select n;
+                                    ThreeHunger.First().Dispose();
+                                }
+                            }
                         }
+                        }
+                        
                     }
                     #endregion
 
 
-                }
+                
             }
 
         }
@@ -931,5 +1061,10 @@ namespace History
  14: Meat 
  15: Salt
  16: Hemps
- */
+
+    */
+    
+
+
+
 

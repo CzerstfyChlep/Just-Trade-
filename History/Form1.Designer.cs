@@ -444,15 +444,16 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.BuySellButton = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
+            this.WoodPriceLabel = new System.Windows.Forms.Label();
             this.WoodTrackBar = new System.Windows.Forms.TrackBar();
             this.WoodBuySellBox = new System.Windows.Forms.ComboBox();
             this.WoodStorageLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.WoodShortageBar = new System.Windows.Forms.ProgressBar();
-            this.CityStorageBar = new System.Windows.Forms.ProgressBar();
+            this.WoodStorageBar = new System.Windows.Forms.ProgressBar();
             this.Inventory = new System.Windows.Forms.GroupBox();
             this.InventroyLabel = new System.Windows.Forms.Label();
+            this.WoodNumberLabel = new System.Windows.Forms.Label();
             this.panel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FortificationsBox)).BeginInit();
@@ -526,6 +527,7 @@
             this.button2.TabIndex = 2;
             this.button2.Text = "Next turn";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // MoveButton
             // 
@@ -5021,14 +5023,15 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.WoodNumberLabel);
             this.groupBox3.Controls.Add(this.BuySellButton);
-            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Controls.Add(this.WoodPriceLabel);
             this.groupBox3.Controls.Add(this.WoodTrackBar);
             this.groupBox3.Controls.Add(this.WoodBuySellBox);
             this.groupBox3.Controls.Add(this.WoodStorageLabel);
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Controls.Add(this.WoodShortageBar);
-            this.groupBox3.Controls.Add(this.CityStorageBar);
+            this.groupBox3.Controls.Add(this.WoodStorageBar);
             this.groupBox3.Location = new System.Drawing.Point(6, 23);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(786, 54);
@@ -5038,30 +5041,31 @@
             // 
             // BuySellButton
             // 
-            this.BuySellButton.Location = new System.Drawing.Point(696, 19);
+            this.BuySellButton.Location = new System.Drawing.Point(705, 19);
             this.BuySellButton.Name = "BuySellButton";
             this.BuySellButton.Size = new System.Drawing.Size(75, 23);
             this.BuySellButton.TabIndex = 8;
             this.BuySellButton.Text = "Buy/Sell";
             this.BuySellButton.UseVisualStyleBackColor = true;
             // 
-            // label2
+            // WoodPriceLabel
             // 
-            this.label2.Location = new System.Drawing.Point(625, 24);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 14);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Price:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.WoodPriceLabel.Location = new System.Drawing.Point(647, 24);
+            this.WoodPriceLabel.Name = "WoodPriceLabel";
+            this.WoodPriceLabel.Size = new System.Drawing.Size(57, 14);
+            this.WoodPriceLabel.TabIndex = 7;
+            this.WoodPriceLabel.Text = "Price:";
+            this.WoodPriceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // WoodTrackBar
             // 
             this.WoodTrackBar.AutoSize = false;
-            this.WoodTrackBar.Location = new System.Drawing.Point(460, 15);
+            this.WoodTrackBar.Location = new System.Drawing.Point(419, 16);
             this.WoodTrackBar.Name = "WoodTrackBar";
             this.WoodTrackBar.Size = new System.Drawing.Size(159, 28);
             this.WoodTrackBar.TabIndex = 6;
             this.WoodTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.WoodTrackBar.Scroll += new System.EventHandler(this.WoodTrackBar_Scroll);
             // 
             // WoodBuySellBox
             // 
@@ -5069,10 +5073,11 @@
             this.WoodBuySellBox.Items.AddRange(new object[] {
             "Buy",
             "Sell"});
-            this.WoodBuySellBox.Location = new System.Drawing.Point(386, 20);
+            this.WoodBuySellBox.Location = new System.Drawing.Point(345, 19);
             this.WoodBuySellBox.Name = "WoodBuySellBox";
             this.WoodBuySellBox.Size = new System.Drawing.Size(68, 21);
             this.WoodBuySellBox.TabIndex = 5;
+            this.WoodBuySellBox.SelectedIndexChanged += new System.EventHandler(this.WoodBuySellBox_SelectedIndexChanged);
             // 
             // WoodStorageLabel
             // 
@@ -5085,7 +5090,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(225, 24);
+            this.label1.Location = new System.Drawing.Point(207, 24);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(58, 14);
             this.label1.TabIndex = 3;
@@ -5096,22 +5101,22 @@
             // 
             this.WoodShortageBar.BackColor = System.Drawing.Color.FloralWhite;
             this.WoodShortageBar.ForeColor = System.Drawing.Color.Blue;
-            this.WoodShortageBar.Location = new System.Drawing.Point(289, 24);
+            this.WoodShortageBar.Location = new System.Drawing.Point(271, 24);
             this.WoodShortageBar.Maximum = 4;
             this.WoodShortageBar.Name = "WoodShortageBar";
-            this.WoodShortageBar.Size = new System.Drawing.Size(91, 14);
+            this.WoodShortageBar.Size = new System.Drawing.Size(68, 14);
             this.WoodShortageBar.TabIndex = 4;
             // 
-            // CityStorageBar
+            // WoodStorageBar
             // 
-            this.CityStorageBar.BackColor = System.Drawing.Color.FloralWhite;
-            this.CityStorageBar.ForeColor = System.Drawing.Color.Blue;
-            this.CityStorageBar.Location = new System.Drawing.Point(114, 24);
-            this.CityStorageBar.Maximum = 1;
-            this.CityStorageBar.Name = "CityStorageBar";
-            this.CityStorageBar.Size = new System.Drawing.Size(105, 14);
-            this.CityStorageBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.CityStorageBar.TabIndex = 2;
+            this.WoodStorageBar.BackColor = System.Drawing.Color.FloralWhite;
+            this.WoodStorageBar.ForeColor = System.Drawing.Color.Blue;
+            this.WoodStorageBar.Location = new System.Drawing.Point(114, 24);
+            this.WoodStorageBar.Maximum = 1;
+            this.WoodStorageBar.Name = "WoodStorageBar";
+            this.WoodStorageBar.Size = new System.Drawing.Size(87, 14);
+            this.WoodStorageBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.WoodStorageBar.TabIndex = 2;
             // 
             // Inventory
             // 
@@ -5132,6 +5137,15 @@
             this.InventroyLabel.Size = new System.Drawing.Size(0, 20);
             this.InventroyLabel.TabIndex = 0;
             this.InventroyLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // WoodNumberLabel
+            // 
+            this.WoodNumberLabel.Location = new System.Drawing.Point(584, 24);
+            this.WoodNumberLabel.Name = "WoodNumberLabel";
+            this.WoodNumberLabel.Size = new System.Drawing.Size(57, 14);
+            this.WoodNumberLabel.TabIndex = 9;
+            this.WoodNumberLabel.Text = "0";
+            this.WoodNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Form1
             // 
@@ -5587,15 +5601,16 @@
         private System.Windows.Forms.Label InventroyLabel;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label MeatLabel;
-        private System.Windows.Forms.ProgressBar CityStorageBar;
+        private System.Windows.Forms.ProgressBar WoodStorageBar;
         private System.Windows.Forms.Label WoodStorageLabel;
         private System.Windows.Forms.ProgressBar WoodShortageBar;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button BuySellButton;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label WoodPriceLabel;
         private System.Windows.Forms.TrackBar WoodTrackBar;
         private System.Windows.Forms.ComboBox WoodBuySellBox;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label WoodNumberLabel;
     }
 }

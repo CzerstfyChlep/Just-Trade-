@@ -18,6 +18,7 @@ namespace History
             p = pr;
         }
         public static Province p;
+
         private void PopulationTrackBar_Scroll(object sender, EventArgs e)
         {
             PopulationLabel.Text = "Population: " + PopulationTrackBar.Value;
