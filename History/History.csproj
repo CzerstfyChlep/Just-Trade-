@@ -52,6 +52,12 @@
     <Compile Include="CountriesList.Designer.cs">
       <DependentUpon>CountriesList.cs</DependentUpon>
     </Compile>
+    <Compile Include="CreateCity.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateCity.Designer.cs">
+      <DependentUpon>CreateCity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,6 +68,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="CountriesList.resx">
       <DependentUpon>CountriesList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CreateCity.resx">
+      <DependentUpon>CreateCity.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

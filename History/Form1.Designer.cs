@@ -32,6 +32,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.MoveButton = new System.Windows.Forms.Button();
             this.MovePointsLabel = new System.Windows.Forms.Label();
             this.CapitalBox = new System.Windows.Forms.CheckBox();
@@ -44,6 +45,7 @@
             this.OwnerBox = new System.Windows.Forms.ComboBox();
             this.TerrainBox = new System.Windows.Forms.ComboBox();
             this.ProductionBox = new System.Windows.Forms.GroupBox();
+            this.MeatLabel = new System.Windows.Forms.Label();
             this.HempsLabel = new System.Windows.Forms.Label();
             this.SaltLabel = new System.Windows.Forms.Label();
             this.SpicesLabel = new System.Windows.Forms.Label();
@@ -439,10 +441,18 @@
             this.AFL = new System.Windows.Forms.Label();
             this.AFF = new System.Windows.Forms.Label();
             this.PlayerPage = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.BuySellButton = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.WoodTrackBar = new System.Windows.Forms.TrackBar();
+            this.WoodBuySellBox = new System.Windows.Forms.ComboBox();
+            this.WoodStorageLabel = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.WoodShortageBar = new System.Windows.Forms.ProgressBar();
+            this.CityStorageBar = new System.Windows.Forms.ProgressBar();
             this.Inventory = new System.Windows.Forms.GroupBox();
             this.InventroyLabel = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.MeatLabel = new System.Windows.Forms.Label();
             this.panel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FortificationsBox)).BeginInit();
@@ -452,6 +462,9 @@
             this.MapPage.SuspendLayout();
             this.Map.SuspendLayout();
             this.PlayerPage.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.WoodTrackBar)).BeginInit();
             this.Inventory.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -495,14 +508,24 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.MoveButton);
             this.groupBox1.Controls.Add(this.MovePointsLabel);
             this.groupBox1.Location = new System.Drawing.Point(7, 349);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(347, 187);
+            this.groupBox1.Size = new System.Drawing.Size(347, 279);
             this.groupBox1.TabIndex = 222;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Player";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(9, 209);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(332, 64);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "Next turn";
+            this.button2.UseVisualStyleBackColor = true;
             // 
             // MoveButton
             // 
@@ -661,6 +684,15 @@
             this.ProductionBox.TabIndex = 221;
             this.ProductionBox.TabStop = false;
             this.ProductionBox.Text = "Production";
+            // 
+            // MeatLabel
+            // 
+            this.MeatLabel.AutoSize = true;
+            this.MeatLabel.Location = new System.Drawing.Point(267, 25);
+            this.MeatLabel.Name = "MeatLabel";
+            this.MeatLabel.Size = new System.Drawing.Size(54, 13);
+            this.MeatLabel.TabIndex = 14;
+            this.MeatLabel.Text = "Meat: 0/0";
             // 
             // HempsLabel
             // 
@@ -4977,12 +5009,116 @@
             this.PlayerPage.Text = "Trader";
             this.PlayerPage.UseVisualStyleBackColor = true;
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.groupBox3);
+            this.groupBox2.Location = new System.Drawing.Point(147, 8);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(798, 500);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Buy/Sell";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.BuySellButton);
+            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Controls.Add(this.WoodTrackBar);
+            this.groupBox3.Controls.Add(this.WoodBuySellBox);
+            this.groupBox3.Controls.Add(this.WoodStorageLabel);
+            this.groupBox3.Controls.Add(this.label1);
+            this.groupBox3.Controls.Add(this.WoodShortageBar);
+            this.groupBox3.Controls.Add(this.CityStorageBar);
+            this.groupBox3.Location = new System.Drawing.Point(6, 23);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(786, 54);
+            this.groupBox3.TabIndex = 5;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Wood";
+            // 
+            // BuySellButton
+            // 
+            this.BuySellButton.Location = new System.Drawing.Point(696, 19);
+            this.BuySellButton.Name = "BuySellButton";
+            this.BuySellButton.Size = new System.Drawing.Size(75, 23);
+            this.BuySellButton.TabIndex = 8;
+            this.BuySellButton.Text = "Buy/Sell";
+            this.BuySellButton.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(625, 24);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(65, 14);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Price:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // WoodTrackBar
+            // 
+            this.WoodTrackBar.AutoSize = false;
+            this.WoodTrackBar.Location = new System.Drawing.Point(460, 15);
+            this.WoodTrackBar.Name = "WoodTrackBar";
+            this.WoodTrackBar.Size = new System.Drawing.Size(159, 28);
+            this.WoodTrackBar.TabIndex = 6;
+            this.WoodTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
+            // 
+            // WoodBuySellBox
+            // 
+            this.WoodBuySellBox.FormattingEnabled = true;
+            this.WoodBuySellBox.Items.AddRange(new object[] {
+            "Buy",
+            "Sell"});
+            this.WoodBuySellBox.Location = new System.Drawing.Point(386, 20);
+            this.WoodBuySellBox.Name = "WoodBuySellBox";
+            this.WoodBuySellBox.Size = new System.Drawing.Size(68, 21);
+            this.WoodBuySellBox.TabIndex = 5;
+            // 
+            // WoodStorageLabel
+            // 
+            this.WoodStorageLabel.Location = new System.Drawing.Point(5, 24);
+            this.WoodStorageLabel.Name = "WoodStorageLabel";
+            this.WoodStorageLabel.Size = new System.Drawing.Size(103, 14);
+            this.WoodStorageLabel.TabIndex = 1;
+            this.WoodStorageLabel.Text = "City storage:";
+            this.WoodStorageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(225, 24);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(58, 14);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Shortage";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // WoodShortageBar
+            // 
+            this.WoodShortageBar.BackColor = System.Drawing.Color.FloralWhite;
+            this.WoodShortageBar.ForeColor = System.Drawing.Color.Blue;
+            this.WoodShortageBar.Location = new System.Drawing.Point(289, 24);
+            this.WoodShortageBar.Maximum = 4;
+            this.WoodShortageBar.Name = "WoodShortageBar";
+            this.WoodShortageBar.Size = new System.Drawing.Size(91, 14);
+            this.WoodShortageBar.TabIndex = 4;
+            // 
+            // CityStorageBar
+            // 
+            this.CityStorageBar.BackColor = System.Drawing.Color.FloralWhite;
+            this.CityStorageBar.ForeColor = System.Drawing.Color.Blue;
+            this.CityStorageBar.Location = new System.Drawing.Point(114, 24);
+            this.CityStorageBar.Maximum = 1;
+            this.CityStorageBar.Name = "CityStorageBar";
+            this.CityStorageBar.Size = new System.Drawing.Size(105, 14);
+            this.CityStorageBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.CityStorageBar.TabIndex = 2;
+            // 
             // Inventory
             // 
             this.Inventory.Controls.Add(this.InventroyLabel);
             this.Inventory.Location = new System.Drawing.Point(6, 8);
             this.Inventory.Name = "Inventory";
-            this.Inventory.Size = new System.Drawing.Size(135, 229);
+            this.Inventory.Size = new System.Drawing.Size(135, 336);
             this.Inventory.TabIndex = 0;
             this.Inventory.TabStop = false;
             this.Inventory.Text = "Player Inventory";
@@ -4990,29 +5126,12 @@
             // InventroyLabel
             // 
             this.InventroyLabel.AutoSize = true;
+            this.InventroyLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.InventroyLabel.Location = new System.Drawing.Point(6, 16);
             this.InventroyLabel.Name = "InventroyLabel";
-            this.InventroyLabel.Size = new System.Drawing.Size(0, 13);
+            this.InventroyLabel.Size = new System.Drawing.Size(0, 20);
             this.InventroyLabel.TabIndex = 0;
             this.InventroyLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Location = new System.Drawing.Point(147, 8);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(360, 229);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Buy/Sell";
-            // 
-            // MeatLabel
-            // 
-            this.MeatLabel.AutoSize = true;
-            this.MeatLabel.Location = new System.Drawing.Point(267, 25);
-            this.MeatLabel.Name = "MeatLabel";
-            this.MeatLabel.Size = new System.Drawing.Size(54, 13);
-            this.MeatLabel.TabIndex = 14;
-            this.MeatLabel.Text = "Meat: 0/0";
             // 
             // Form1
             // 
@@ -5042,6 +5161,9 @@
             this.MapPage.ResumeLayout(false);
             this.Map.ResumeLayout(false);
             this.PlayerPage.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.WoodTrackBar)).EndInit();
             this.Inventory.ResumeLayout(false);
             this.Inventory.PerformLayout();
             this.ResumeLayout(false);
@@ -5465,5 +5587,15 @@
         private System.Windows.Forms.Label InventroyLabel;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label MeatLabel;
+        private System.Windows.Forms.ProgressBar CityStorageBar;
+        private System.Windows.Forms.Label WoodStorageLabel;
+        private System.Windows.Forms.ProgressBar WoodShortageBar;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Button BuySellButton;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TrackBar WoodTrackBar;
+        private System.Windows.Forms.ComboBox WoodBuySellBox;
+        private System.Windows.Forms.Button button2;
     }
 }

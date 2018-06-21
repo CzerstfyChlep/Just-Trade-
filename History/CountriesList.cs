@@ -20,17 +20,18 @@ namespace History
             CountriesBox.Items.Add("New country");
             foreach (Country c in Form1.Countries)
             {
-                if(c.Name != "None")
-                CountriesBox.Items.Add(c.Name);
+                if (c.Name != "None")
+                    CountriesBox.Items.Add(c.Name);
             }
-            }
-        
+            
+        }
+
         public static Country ct;
         public int mode = 0;
         public void ChooseCountry(object sender, EventArgs e)
         {
             ComboBox CB = (ComboBox)sender;
-            if (CB.Text == "New country")                               
+            if (CB.Text == "New country")
             {
                 NameBox.Text = "Name";
                 RulerBox.Text = "Ruler";
@@ -94,9 +95,9 @@ namespace History
             if (mode == 0)
             {
                 CreateButton.Enabled = true;
-               
+
             }
-            else 
+            else
             {
                 SaveButton.Enabled = true;
             }
@@ -118,7 +119,7 @@ namespace History
 
             }
             ColorLabel.BackColor = colorDialog1.Color;
-            
+
         }
     }
 }
