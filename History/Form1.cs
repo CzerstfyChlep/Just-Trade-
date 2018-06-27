@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.Media;
 
 namespace History
 {
@@ -21,10 +22,10 @@ namespace History
             PlayerInventory.Clear();
             foreach (string s in ProductName)
             {
-                PlayerInventory.Add(s, 0);
+                PlayerInventory.Add(s, 5);
             }
 
-
+            
             if (!Countries.Any())
             {
                 Country Gaia = new Country();
@@ -79,15 +80,27 @@ namespace History
 
         private void Tabs_TabIndexChanged(object sender, EventArgs e)
         {
+
             if (Tabs.SelectedTab == PlayerPage)
             {
+                try
+                {
+                    PopulationLabel.Text = "Population: " + Clicked.Population.Count();
+                }
+                catch
+                {
+                    PopulationLabel.Text = "Population: " + "ERROR";
+                }
                 InventroyLabel.Text = "Wood: " + PlayerInventory["wood"] + "\nBricks: " + PlayerInventory["bricks"] + "\nWheat: " + PlayerInventory["wheat"] + "\nMeat: " + PlayerInventory["meat"] + "\nMetals: " + PlayerInventory["metals"] + "\nTools: " + PlayerInventory["tools"] + "\nWeapons: " + PlayerInventory["weapons"] + "\nWool: " + PlayerInventory["wool"] + "\nCloth: " + PlayerInventory["cloth"] + "\nFurs: " + PlayerInventory["furs"] + "\nAle: " + PlayerInventory["ale"] + "\nWine: " + PlayerInventory["wine"] + "\nSpices: " + PlayerInventory["spices"] + "\nSalt: " + PlayerInventory["salt"] + "\nHemps: " + PlayerInventory["hemps"];
                 #region woodUpdateBuySell                
+                WoodBuySellBox.Text = "";
                 WoodStorageLabel.Text = "City storage: " + Clicked.Storage["wood"];
-                WoodTrackBar.Maximum = (int)Math.Round(Clicked.Population.Count * 0.05);
+                WoodTrackBar.Maximum = Clicked.Storage["wood"];
                 WoodShortageBar.Value = Clicked.Shortage["wood"];
                 try
                 {
+                    Clicked.CalculateNeed();
+                    WoodStorageBar.Maximum = Clicked.PopulationUsage["wood"] * 3;
                     WoodStorageBar.Value = Clicked.Storage["wood"];
                 }
                 catch
@@ -107,6 +120,9 @@ namespace History
                     break;
                 case "Sell":
                     WoodTrackBar.Maximum = PlayerInventory["wood"];
+                    break;
+                default:
+                    WoodTrackBar.Maximum = 0;
                     break;
             }
         }
@@ -129,26 +145,35 @@ namespace History
  */
         private void WoodTrackBar_Scroll(object sender, EventArgs e)
         {
-            int NewStorage = Clicked.Storage["wood"];
+            Clicked.CalculateNeed();
             WoodNumberLabel.Text = WoodTrackBar.Value.ToString();
             int price = 0;
-            int WoodNeededToEndShortage = (int)Math.Round(Clicked.Population.Count * 0.01);
+            for(int n = 1; n < WoodTrackBar.Value; n++)
+            {
+                int addtoprice = 0;
+                Clicked.CalculateNeed("wood", (Clicked.Storage["wood"] - n));
+                addtoprice = (int)Math.Round(Prices["wood"] * Clicked.PriceModifier["wood"]);
+                price += addtoprice;
+            }           
+            WoodPriceLabel.Text = "Price: " + price;
+            /*
+              int WoodNeededToEndShortage = (int)Math.Round(Clicked.Population.Count * 0.01);
             for (int n = 0; n < WoodTrackBar.Value; n++)
             {
-                int addtoprice = 0;             
-                if(Clicked.Shortage["wood"] > 0 && NewStorage < WoodNeededToEndShortage)
+                int addtoprice = 0;
+                if (Clicked.Shortage["wood"] > 0 && NewStorage < WoodNeededToEndShortage)
                 {
-                    addtoprice = (int)(Prices["wood"] + Math.Round(Prices["wood"] * (0.1 * Clicked.Shortage["wood"])));                    
+                    addtoprice = (int)(Prices["wood"] + Math.Round(Prices["wood"] * (0.1 * Clicked.Shortage["wood"])));
                 }
                 else
                 {
                     addtoprice = Prices["wood"];
                 }
-                if(Clicked.Production["wood"] < 0)
+                if (Clicked.Production["wood"] < 0)
                 {
                     addtoprice += (int)Math.Round(Prices["wood"] * 0.1);
                 }
-                else if(Clicked.Production["wood"] == 0)
+                else if (Clicked.Production["wood"] == 0)
                 {
                     addtoprice += (int)Math.Round(Prices["wood"] * 0.05);
                 }
@@ -170,8 +195,7 @@ namespace History
                 price += addtoprice;
                 NewStorage--;
             }
-            WoodPriceLabel.Text = "Price: " + price;
-
+             */
         }
         public static List<Province> Provinces = new List<Province> { };
 
@@ -198,8 +222,7 @@ namespace History
         }
         public Dictionary<string, int> PlayerInventory = new Dictionary<string, int>();
         public Dictionary<string, int> Prices = new Dictionary<string, int>();
-        public static string[] ProductName = new string[] {"wood", "bricks", "wheat", "metals", "tools",
-            "weapons","wool", "cloth", "furs", "ale", "wine", "spices", "salt","meat", "hemps"};
+        public static string[] ProductName = new string[] { "wood", "bricks", "wheat", "metals", "tools", "weapons", "wool", "cloth", "furs", "ale", "wine", "spices", "salt", "meat", "hemps" };
         public static int Gold;
         public static int idstore = 0;
         public static int MovePoints = 3;
@@ -403,7 +426,7 @@ namespace History
                         foreach (Province pr in Provinces)
                         {
                             pr.ctrl.Text = "#";
-                            if(pr.ProvinceName != "None")
+                            if (pr.ProvinceName != "None")
                             {
                                 pr.ctrl.Text = pr.ProvinceName;
                             }
@@ -432,7 +455,7 @@ namespace History
                                     break;
                             }
                         }
-                        if(!PlayerCurrent.ctrl.Text.Contains("#"))
+                        if (!PlayerCurrent.ctrl.Text.Contains("#"))
                             PlayerCurrent.ctrl.Text += "\n*";
                         else
                         {
@@ -446,9 +469,9 @@ namespace History
                         {
                             pro.ctrl.Text = pro.ProvinceName;
                         }
-                        if (PlayerCurrent.ctrl.Text.Contains("#"))                        
+                        if (PlayerCurrent.ctrl.Text.Contains("#"))
                             PlayerCurrent.ctrl.Text = "*";
-                        
+
                         else if (!PlayerCurrent.ctrl.Text.Contains("*"))
                             PlayerCurrent.ctrl.Text += "\n*";
 
@@ -678,7 +701,7 @@ namespace History
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
+
             try
             {
                 /*
@@ -692,15 +715,15 @@ namespace History
                 cc.ShowDialog();
                 UpdateProductionStorage();
                 Clicked.Storage["wood"] = 30;
-                
+
             }
             catch
             {
                 MessageBox.Show("No province has been selected!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
-            
-            
+
+
+
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -715,30 +738,30 @@ namespace History
                 {
 
                 }
-                
+
             }
         }
     }
     public class Country
+    {
+        public List<Province> Land { get; set; } = new List<Province>();
+        public string Name { get; set; }
+        public string CurrentRuler { get; set; }
+        public string AlternateRuler { get; set; }
+        public List<string> PreviousRulers { get; set; }
+        public int Stability { get; set; }
+        public List<Country> WarEnemies { get; set; }
+        public List<Country> Allies { get; set; }
+        public string TypeOfGovernoment { get; set; }
+        public Province Capital { get; set; }
+        public Color Color { get; set; }
+        public void NewRuler(string Name)
         {
-            public List<Province> Land { get; set; } = new List<Province>();
-            public string Name { get; set; }
-            public string CurrentRuler { get; set; }
-            public string AlternateRuler { get; set; }
-            public List<string> PreviousRulers { get; set; }
-            public int Stability { get; set; }
-            public List<Country> WarEnemies { get; set; }
-            public List<Country> Allies { get; set; }
-            public string TypeOfGovernoment { get; set; }
-            public Province Capital { get; set; }
-            public Color Color { get; set; }
-            public void NewRuler(string Name)
-            {
-                PreviousRulers.Add(CurrentRuler);
-                CurrentRuler = Name;
-            }
-
+            PreviousRulers.Add(CurrentRuler);
+            CurrentRuler = Name;
         }
+
+    }
     public class Human
     {
         public double age { get; set; }
@@ -759,291 +782,330 @@ namespace History
             age += 0.25;
         }
     }
-        public class Province
+    public class Province
+    {
+        public Label ctrl { get; }
+        public int ID { get; }
+        public string Terrain { get; set; }
+        public string ProvinceName { get; set; }
+        public int Fortifications { get; set; }
+        public int Development { get; set; }
+        public Country Owner { get; set; }
+        public double Hungry { get; set; }
+        public bool WarMode { get; set; }
+        public int Treseoury { get; set; }
+        public List<Human> Population { get; set; } = new List<Human> { };
+        public Dictionary<string, int> Shortage { get; set; } = new Dictionary<string, int>();
+        public Dictionary<string, int> Buildings { get; set; } = new Dictionary<string, int>();
+        public Dictionary<string, double> PriceModifier { get; set; } = new Dictionary<string, double>();
+        public Country Occ { get; set; }
+        public Dictionary<string, int> Production { get; set; } = new Dictionary<string, int>();
+        public Dictionary<string, int> PopulationUsage { get; set; } = new Dictionary<string, int>();
+        public Dictionary<string, int> Storage { get; set; } = new Dictionary<string, int>();
+        public Dictionary<string, int> BProduction { get; set; } = new Dictionary<string, int>();
+        public Province(Label Lb)
         {
-            public Label ctrl { get; }
-            public int ID { get; }
-            public string Terrain { get; set; }
-            public string ProvinceName { get; set; }
-            public int Fortifications { get; set; }
-            public int Development { get; set; }
-            public Country Owner { get; set; }
-            public double Hungry { get; set; }
-            public bool WarMode { get; set; }
-            public int Treseoury { get; set; }
-            public List<Human> Population { get; set; } = new List<Human> { };
-            public Dictionary<string, int> Shortage { get; set; } = new Dictionary<string, int>();
-            public Dictionary<string, int> Buildings { get; set; } = new Dictionary<string, int>();
-            public Country Occ { get; set; }
-            public Dictionary<string, int> Production { get; set; } = new Dictionary<string, int>();
-            public Dictionary<string, int> Storage { get; set; } = new Dictionary<string, int>();
-            public Dictionary<string, int> BProduction { get; set; } = new Dictionary<string, int>();
-            public Province(Label Lb)
-            {
-                ctrl = Lb;
-                ID = Form1.idstore;
-                Form1.idstore++;
-                ProvinceName = "None";
-                Production.Add("wood", 0);
-                Storage.Add("wood", 0);
-                Production.Add("bricks", 0);
-                Storage.Add("bricks", 0);
-                Production.Add("wheat", 0);
-                Storage.Add("wheat", 0);
-                Production.Add("metals", 0);
-                Storage.Add("metals", 0);
-                Production.Add("tools", 0);
-                Storage.Add("tools", 0);
-                Production.Add("weapons", 0);
-                Storage.Add("weapons", 0);
-                Production.Add("wool", 0);
-                Storage.Add("wool", 0);
-                Production.Add("cloth", 0);
-                Storage.Add("cloth", 0);
-                Production.Add("furs", 0);
-                Storage.Add("furs", 0);
-                Production.Add("ale", 0);
-                Storage.Add("ale", 0);
-                Production.Add("wine", 0);
-                Storage.Add("wine", 0);
-                Production.Add("spices", 0);
-                Storage.Add("spices", 0);
-                Production.Add("meat", 0);
-                Storage.Add("meat", 0);
-                Production.Add("salt", 0);
-                Storage.Add("salt", 0);
-                Production.Add("hemps", 0);
-                Storage.Add("hemps", 0);
-                              
-                foreach(string s in Form1.ProductName)
+            ctrl = Lb;
+            ID = Form1.idstore;
+            Form1.idstore++;
+            ProvinceName = "None";
+            Production.Add("wood", 0);
+            Storage.Add("wood", 0);
+            Production.Add("bricks", 0);
+            Storage.Add("bricks", 0);
+            Production.Add("wheat", 0);
+            Storage.Add("wheat", 0);
+            Production.Add("metals", 0);
+            Storage.Add("metals", 0);
+            Production.Add("tools", 0);
+            Storage.Add("tools", 0);
+            Production.Add("weapons", 0);
+            Storage.Add("weapons", 0);
+            Production.Add("wool", 0);
+            Storage.Add("wool", 0);
+            Production.Add("cloth", 0);
+            Storage.Add("cloth", 0);
+            Production.Add("furs", 0);
+            Storage.Add("furs", 0);
+            Production.Add("ale", 0);
+            Storage.Add("ale", 0);
+            Production.Add("wine", 0);
+            Storage.Add("wine", 0);
+            Production.Add("spices", 0);
+            Storage.Add("spices", 0);
+            Production.Add("meat", 0);
+            Storage.Add("meat", 0);
+            Production.Add("salt", 0);
+            Storage.Add("salt", 0);
+            Production.Add("hemps", 0);
+            Storage.Add("hemps", 0);
+
+            foreach (string s in Form1.ProductName)
             {
                 BProduction.Add(s, 0);
                 Shortage.Add(s, 0);
                 Buildings.Add(s, 0);
+                PriceModifier.Add(s, 100);
+                PopulationUsage.Add(s, 0);
             }
-                WarMode = false;
-
-            }          
-            public void CityTurn()
-            {                
-                    foreach (string key in Buildings.Keys)
-                    {
-                        
-                            switch (key)
-                            {
-                                case "tools":
-                                    if (WarMode == false)
-                                    {
-                                        int MetalsNeeded = Buildings["tools"] * 5;
-                                        if (Math.Floor(Storage["metals"] * 0.75) >= MetalsNeeded)
-                                        {
-                                            Storage["metals"] -= MetalsNeeded;
-                                            Storage["tools"] += Buildings["tools"];
-                                            Production["tools"] = Buildings["tools"];
-                                        }
-                                        else if (Math.Floor(Storage["metals"] * 0.75) <= MetalsNeeded)
-                                        {
-                                            int number = (int)Math.Floor((double)Math.Floor(Storage["metals"] * 0.75) / 5);
-                                            Storage["metals"] -= 5 * number;
-                                            Storage["tools"] += number;
-                                            Production["tools"] = number;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        int MetalsNeeded = Buildings["tools"] * 5;
-                                        if (Math.Floor(Storage["metals"] * 0.25) >= MetalsNeeded)
-                                        {
-                                            Storage["metals"] -= MetalsNeeded;
-                                            Storage["tools"] += Buildings["tools"];
-                                            Production["tools"] = Buildings["tools"];
-                                        }
-                                        else if (Math.Floor(Storage["metals"] * 0.25) <= MetalsNeeded)
-                                        {
-                                            int number = (int)Math.Floor((double)Math.Floor(Storage["metals"] * 0.25) / 5);
-                                            Storage["metals"] -= 5 * number;
-                                            Storage["tools"] += number;
-                                            Production["tools"] = number;
-                                        }
-                                    }
-                                    break;
-                                case "weapons":
-                                    if (WarMode == true)
-                                    {
-                                        int MetalsNeeded = Buildings["weapons"] * 5;
-                                        if (Math.Floor(Storage["metals"] * 0.25) >= MetalsNeeded)
-                                        {
-                                            Storage["metals"] -= MetalsNeeded;
-                                            Storage["weapons"] += Buildings["weapons"];
-                                            Production["weapons"] = Buildings["weapons"];
-                                        }
-                                        else if (Math.Floor(Storage["metals"] * 0.25) <= MetalsNeeded)
-                                        {
-                                            int number = (int)Math.Floor((double)Math.Floor(Storage["metals"] * 0.25) / 5);
-                                            Storage["metals"] -= 5 * number;
-                                            Storage["weapons"] += number;
-                                            Production["weapons"] = number;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        int MetalsNeeded = Buildings["weapons"] * 5;
-                                        if (Math.Floor(Storage["metals"] * 0.75) >= MetalsNeeded)
-                                        {
-                                            Storage["metals"] -= MetalsNeeded;
-                                            Storage["weapons"] += Buildings["weapons"];
-                                            Production["weapons"] = Buildings["weapons"];
-                                        }
-                                        else if (Math.Floor(Storage["metals"] * 0.75) <= MetalsNeeded)
-                                        {
-                                            int number = (int)Math.Floor((double)Math.Floor(Storage["metals"] * 0.75) / 5);
-                                            Storage["metals"] -= 5 * number;
-                                            Storage["weapons"] += number;
-                                            Production["weapons"] = number;
-                                        }
-
-                                    }
-                                    break;
-                                case "cloth":
-                                    int WoolNeeded = Buildings["cloth"] * 10;
-                                    if (Storage["wool"] >= WoolNeeded)
-                                    {
-                                        Storage["wool"] -= WoolNeeded;
-                                        Storage["cloth"] += Buildings["cloth"];
-                                        Production["cloth"] = Buildings["cloth"];
-                                    }
-                                    else if (Storage["wool"] <= WoolNeeded)
-                                    {
-                                        int number = (int)Math.Floor((double)Storage["wool"] / 10);
-                                        Storage["wool"] -= 10 * number;
-                                        Storage["cloth"] += number;
-                                        Production["cloth"] = number;
-                                    }
-                                    break;
-                                case "ale":
-                                    goto Food;
-                                    int WheatNeeded = Buildings["ale"] * 15;
-                                    if (Storage["wheat"] >= WheatNeeded)
-                                    {
-                                        Storage["wheat"] -= WheatNeeded;
-                                        Storage["ale"] += Buildings["ale"];
-                                        Production["ale"] = Buildings["ale"];
-                                    }
-                                    else if (Storage["wheat"] <= WheatNeeded)
-                                    {
-                                        int number = (int)Math.Floor((double)Storage["wheat"] / 15);
-                                        Storage["wheat"] -= 15 * number;
-                                        Storage["ale"] += number;
-                                        Production["ale"] = number;
-                                    }
-                                    break;
-                                default:
-                                    Production[key] = BProduction[key] + (int)Math.Floor(BProduction[key] * (Buildings[key] * 0.1));
-                                    break;
-                            
-                        }
-                    }
-                    Production["wood"] -= (int)Math.Round(Population.Count * 0.005);
-                    Production["bricks"] -= (int)Math.Round(Population.Count * 0.004);
-                    Production["tools"] -= (int)Math.Round(Population.Count * 0.001);
-                    Production["cloth"] -= (int)Math.Round(Population.Count * 0.001);
-                    Production["furs"] -= (int)Math.Round(Population.Count * 0.003);
-                    Production["ale"] -= (int)Math.Round(Population.Count * 0.002);
-                    Production["wine"] -= (int)Math.Round(Population.Count * 0.001);
-                    Production["spices"] -= (int)Math.Round(Population.Count * 0.001);
-                    Production["salt"] -= (int)Math.Round(Population.Count * 0.003);
-                    Production["hemps"] -= (int)Math.Round(Population.Count * 0.005);
-                    Production["metals"] -= Production["tools"] * 5 + Production["weapons"] * 5;
-                    Production["wool"] -= Production["cloth"] * 10;
-                    Production["wheat"] -= Production["ale"] * 15;
-                    foreach (string s in Form1.ProductName)
-                    {
-                        Storage[s] += Production[s];
-                        if (Storage[s] < 0)
-                        {
-                            Shortage[s]++;
-                        if(Shortage[s] > 4)
-                        {
-                            Shortage[s] = 4;
-                        }
-                            Storage[s] = 0;
-                        }
-                    else
-                    {
-                        Shortage[s]--;
-                    }
-                    }
-                    #region Buildings
-
-                    #endregion
-                    #region Food
-                    Food:
-                    int FoodNeeded = (int)Math.Round(Population.Count * 0.01);
-                    int MeatFood = Storage["meat"] * 2;
-                    int WheatFood = Storage["wheat"];
-                    if (FoodNeeded <= MeatFood)
-                    {
-                        FoodNeeded = 0;
-                        MeatFood -= FoodNeeded;
-                        Storage["meat"] = (int)Math.Floor((double)MeatFood / 2);
-                    }
-                
-                    else if (FoodNeeded > MeatFood && FoodNeeded <= (MeatFood + WheatFood))
-                    {
-                        FoodNeeded -= MeatFood;
-                        Storage["meat"] = 0;
-                        WheatFood -= FoodNeeded;
-                        Storage["wheat"] = WheatFood;
-
-                    }
-                    else if (FoodNeeded > (MeatFood + WheatFood))
-                    {
-                        int AF = FoodNeeded;
-                        FoodNeeded -= MeatFood + WheatFood;
-                        Storage["meat"] = 0;
-                        Storage["wheat"] = 0;
-                        FoodNeeded *= 100;
-                        for (;FoodNeeded != 0; FoodNeeded--)
-                        {
-                            IEnumerable<Human> ZeroHunger = from n in Population
-                                                            where n.hunger < 1
-                                                            select n;
-                            if(ZeroHunger.Any())
-                                ZeroHunger.First().hunger++;
-                        else
-                        {
-                            IEnumerable<Human> OneHunger = from n in Population
-                                                            where n.hunger == 1
-                                                            select n;
-                            if (OneHunger.Any())
-                                OneHunger.First().hunger++;
-                            else
-                            {
-                                IEnumerable<Human> TwoHunger = from n in Population
-                                                               where n.hunger == 2
-                                                               select n;
-                                if (TwoHunger.Any())
-                                    TwoHunger.First().hunger++;
-                                else
-                                {
-                                    IEnumerable<Human> ThreeHunger = from n in Population
-                                                                   where n.hunger == 3
-                                                                   select n;
-                                    ThreeHunger.First().Dispose();
-                                }
-                            }
-                        }
-                        }
-                        
-                    }
-                    #endregion
-
-
-                
-            }
+            WarMode = false;
 
         }
-    
+        public void CalculateNeed(string product = "all", int NewStorage = 0)
+        {
+            PopulationUsage["wood"] = (int)Math.Round(Population.Count * 0.005);
+            PopulationUsage["bricks"] = (int)Math.Round(Population.Count * 0.004);
+            PopulationUsage["tools"] = (int)Math.Round(Population.Count * 0.001);
+            PopulationUsage["cloth"] = (int)Math.Round(Population.Count * 0.001);
+            PopulationUsage["furs"] = (int)Math.Round(Population.Count * 0.003);
+            PopulationUsage["ale"] = (int)Math.Round(Population.Count * 0.002);
+            PopulationUsage["wine"] = (int)Math.Round(Population.Count * 0.001);
+            PopulationUsage["spices"] = (int)Math.Round(Population.Count * 0.001);
+            PopulationUsage["salt"] = (int)Math.Round(Population.Count * 0.003);
+            PopulationUsage["hemps"] = (int)Math.Round(Population.Count * 0.005);
+            PopulationUsage["wool"] = (int)Math.Round(Population.Count * 0.002);
+            int woodNeedThreeDays = PopulationUsage["wood"] * 3;
+            switch (product)
+            {
+                case "wood":
+                    double woodPercentage = (woodNeedThreeDays / NewStorage);
+                    PriceModifier["wood"] = woodPercentage;
+                    if (PopulationUsage["wood"] > (BProduction["wood"] + (int)Math.Floor(BProduction["wood"] * (Buildings["wood"] * 0.1))))
+                        PriceModifier["wood"] += 0.1;
+                    else if (PopulationUsage["wood"] == (BProduction["wood"] + (int)Math.Floor(BProduction["wood"] * (Buildings["wood"] * 0.1))))
+                        PriceModifier["wood"] += 0.05;
+                    else
+                        PriceModifier["wood"] -= 0.1;
+
+                    break;
+            default:
+                    #region wood
+                    double Woodpercentage = woodNeedThreeDays / Storage["wood"];
+                    PriceModifier["wood"] = Woodpercentage;
+                    if (PopulationUsage["wood"] > (BProduction["wood"] + (int)Math.Floor(BProduction["wood"] * (Buildings["wood"] * 0.1))))
+                        PriceModifier["wood"] += 0.1;
+                    else if (PopulationUsage["wood"] > (BProduction["wood"] + (int)Math.Floor(BProduction["wood"] * (Buildings["wood"] * 0.1))))
+                        PriceModifier["wood"] += 0.05;
+                    else
+                        PriceModifier["wood"] -= 0.1;
+
+                    #endregion
+                    break;
+            }
+            
+        }
+        public void CityTurn()
+        {
+            CalculateNeed();
+            foreach (string key in Buildings.Keys)
+            {
+
+                switch (key)
+                {
+                    case "tools":
+                        if (WarMode == false)
+                        {
+                            int MetalsNeeded = Buildings["tools"] * 5;
+                            if (Math.Floor(Storage["metals"] * 0.75) >= MetalsNeeded)
+                            {
+                                Storage["metals"] -= MetalsNeeded;
+                                Storage["tools"] += Buildings["tools"];
+                                Production["tools"] = Buildings["tools"];
+                            }
+                            else if (Math.Floor(Storage["metals"] * 0.75) < MetalsNeeded)
+                            {
+                                int number = (int)Math.Floor((double)Math.Floor(Storage["metals"] * 0.75) / 5);
+                                Storage["metals"] -= 5 * number;
+                                Storage["tools"] += number;
+                                Production["tools"] = number;
+                            }
+                        }
+                        else
+                        {
+                            int MetalsNeeded = Buildings["tools"] * 5;
+                            if (Math.Floor(Storage["metals"] * 0.25) >= MetalsNeeded)
+                            {
+                                Storage["metals"] -= MetalsNeeded;
+                                Storage["tools"] += Buildings["tools"];
+                                Production["tools"] = Buildings["tools"];
+                            }
+                            else if (Math.Floor(Storage["metals"] * 0.25) < MetalsNeeded)
+                            {
+                                int number = (int)Math.Floor((double)Math.Floor(Storage["metals"] * 0.25) / 5);
+                                Storage["metals"] -= 5 * number;
+                                Storage["tools"] += number;
+                                Production["tools"] = number;
+                            }
+                        }
+                        break;
+                    case "weapons":
+                        if (WarMode == true)
+                        {
+                            int MetalsNeeded = Buildings["weapons"] * 5;
+                            if (Math.Floor(Storage["metals"] * 0.25) >= MetalsNeeded)
+                            {
+                                Storage["metals"] -= MetalsNeeded;
+                                Storage["weapons"] += Buildings["weapons"];
+                                Production["weapons"] = Buildings["weapons"];
+                            }
+                            else if (Math.Floor(Storage["metals"] * 0.25) < MetalsNeeded)
+                            {
+                                int number = (int)Math.Floor((double)Math.Floor(Storage["metals"] * 0.25) / 5);
+                                Storage["metals"] -= 5 * number;
+                                Storage["weapons"] += number;
+                                Production["weapons"] = number;
+                            }
+                        }
+                        else
+                        {
+                            int MetalsNeeded = Buildings["weapons"] * 5;
+                            if (Math.Floor(Storage["metals"] * 0.75) >= MetalsNeeded)
+                            {
+                                Storage["metals"] -= MetalsNeeded;
+                                Storage["weapons"] += Buildings["weapons"];
+                                Production["weapons"] = Buildings["weapons"];
+                            }
+                            else if (Math.Floor(Storage["metals"] * 0.75) < MetalsNeeded)
+                            {
+                                int number = (int)Math.Floor((double)Math.Floor(Storage["metals"] * 0.75) / 5);
+                                Storage["metals"] -= 5 * number;
+                                Storage["weapons"] += number;
+                                Production["weapons"] = number;
+                            }
+
+                        }
+                        break;
+                    case "cloth":
+                        int WoolNeeded = Buildings["cloth"] * 10;
+                        if (Storage["wool"] >= WoolNeeded)
+                        {
+                            Storage["wool"] -= WoolNeeded;
+                            Storage["cloth"] += Buildings["cloth"];
+                            Production["cloth"] = Buildings["cloth"];
+                        }
+                        else if (Storage["wool"] < WoolNeeded)
+                        {
+                            int number = (int)Math.Floor((double)Storage["wool"] / 10);
+                            Storage["wool"] -= 10 * number;
+                            Storage["cloth"] += number;
+                            Production["cloth"] = number;
+                        }
+                        break;
+                    case "ale":
+                        int WheatNeeded = Buildings["ale"] * 5;
+                        if (Storage["wheat"] >= WheatNeeded)
+                        {
+                            Storage["wheat"] -= WheatNeeded;
+                            Storage["ale"] += Buildings["ale"];
+                            Production["ale"] = Buildings["ale"];
+                        }
+                        else if (Storage["wheat"] < WheatNeeded)
+                        {
+                            int number = (int)Math.Floor((double)Storage["wheat"] / 5);
+                            Storage["wheat"] -= 5 * number;
+                            Storage["ale"] += number;
+                            Production["ale"] = number;
+                        }
+                        break;
+                    default:
+                        Production[key] = BProduction[key] + (int)Math.Floor(BProduction[key] * (Buildings[key] * 0.1)) - PopulationUsage[key];
+                        break;
+
+                }
+            }
+
+            foreach (string s in Form1.ProductName)
+            {
+                Storage[s] += Production[s];
+                if (Storage[s] < 0)
+                {
+                    Shortage[s]++;
+                    if (Shortage[s] > 4)
+                    {
+                        Shortage[s] = 4;
+                    }
+                    Storage[s] = 0;
+                }
+                else
+                {
+                    Shortage[s] = 0;
+                }
+            }
+            #region Buildings
+
+            #endregion
+            #region Food
+            Food:
+            int FoodNeeded = (int)Math.Round(Population.Count * 0.01);
+            int MeatFood = Storage["meat"] * 2;
+            int WheatFood = Storage["wheat"];
+            if (FoodNeeded <= MeatFood)
+            {
+                FoodNeeded = 0;
+                MeatFood -= FoodNeeded;
+                Storage["meat"] = (int)Math.Floor((double)MeatFood / 2);
+            }
+
+            else if (FoodNeeded > MeatFood && FoodNeeded <= (MeatFood + WheatFood))
+            {
+                FoodNeeded -= MeatFood;
+                Storage["meat"] = 0;
+                WheatFood -= FoodNeeded;
+                Storage["wheat"] = WheatFood;
+
+            }
+            else if (FoodNeeded > (MeatFood + WheatFood))
+            {
+                int AF = FoodNeeded;
+                FoodNeeded -= MeatFood + WheatFood;
+                Storage["meat"] = 0;
+                Storage["wheat"] = 0;
+                FoodNeeded *= 100;
+                IEnumerable<Human> ZeroHunger = from n in Population
+                                                where n.hunger < 1
+                                                select n;
+                IEnumerable<Human> OneHunger = from n in Population
+                                               where n.hunger == 1
+                                               select n;
+                IEnumerable<Human> TwoHunger = from n in Population
+                                               where n.hunger == 2
+                                               select n;
+                IEnumerable<Human> ThreeHunger = from n in Population
+                                                 where n.hunger == 3
+                                                 select n;
+
+                for (; FoodNeeded != 0; FoodNeeded--)
+                {
+
+                    if (ZeroHunger.Any())
+                        ZeroHunger.First().hunger++;
+                    else
+                    {
+
+                        if (OneHunger.Any())
+                            OneHunger.First().hunger++;
+                        else
+                        {
+
+                            if (TwoHunger.Any())
+                                TwoHunger.First().hunger++;
+                            else
+                            {
+
+                            }
+                        }
+                    }
+                }
+
+            }
+            #endregion
+
+
+
+        }
+
+    }
+
 }
 /*Production list
  1: Wood
@@ -1063,7 +1125,7 @@ namespace History
  16: Hemps
 
     */
-    
+
 
 
 

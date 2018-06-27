@@ -454,6 +454,7 @@
             this.Inventory = new System.Windows.Forms.GroupBox();
             this.InventroyLabel = new System.Windows.Forms.Label();
             this.WoodNumberLabel = new System.Windows.Forms.Label();
+            this.PopulationLabel = new System.Windows.Forms.Label();
             this.panel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FortificationsBox)).BeginInit();
@@ -5013,6 +5014,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.PopulationLabel);
             this.groupBox2.Controls.Add(this.groupBox3);
             this.groupBox2.Location = new System.Drawing.Point(147, 8);
             this.groupBox2.Name = "groupBox2";
@@ -5050,9 +5052,9 @@
             // 
             // WoodPriceLabel
             // 
-            this.WoodPriceLabel.Location = new System.Drawing.Point(647, 24);
+            this.WoodPriceLabel.Location = new System.Drawing.Point(631, 24);
             this.WoodPriceLabel.Name = "WoodPriceLabel";
-            this.WoodPriceLabel.Size = new System.Drawing.Size(57, 14);
+            this.WoodPriceLabel.Size = new System.Drawing.Size(74, 14);
             this.WoodPriceLabel.TabIndex = 7;
             this.WoodPriceLabel.Text = "Price:";
             this.WoodPriceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -5140,12 +5142,21 @@
             // 
             // WoodNumberLabel
             // 
-            this.WoodNumberLabel.Location = new System.Drawing.Point(584, 24);
+            this.WoodNumberLabel.Location = new System.Drawing.Point(580, 24);
             this.WoodNumberLabel.Name = "WoodNumberLabel";
-            this.WoodNumberLabel.Size = new System.Drawing.Size(57, 14);
+            this.WoodNumberLabel.Size = new System.Drawing.Size(53, 14);
             this.WoodNumberLabel.TabIndex = 9;
             this.WoodNumberLabel.Text = "0";
             this.WoodNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // PopulationLabel
+            // 
+            this.PopulationLabel.AutoSize = true;
+            this.PopulationLabel.Location = new System.Drawing.Point(11, 87);
+            this.PopulationLabel.Name = "PopulationLabel";
+            this.PopulationLabel.Size = new System.Drawing.Size(60, 13);
+            this.PopulationLabel.TabIndex = 225;
+            this.PopulationLabel.Text = "Population:";
             // 
             // Form1
             // 
@@ -5162,7 +5173,7 @@
             this.Controls.Add(this.TerrainButton);
             this.Controls.Add(this.BrushButton);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Just Trade";
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -5176,6 +5187,7 @@
             this.Map.ResumeLayout(false);
             this.PlayerPage.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.WoodTrackBar)).EndInit();
             this.Inventory.ResumeLayout(false);
@@ -5217,7 +5229,6 @@
         private System.Windows.Forms.Label HempsLabel;
         private System.Windows.Forms.Label id;
         private System.Windows.Forms.CheckBox CapitalBox;
-        private System.Windows.Forms.TabControl Tabs;
         private System.Windows.Forms.TabPage MapPage;
         private System.Windows.Forms.Panel Map;
         private System.Windows.Forms.Label AHQ;
@@ -5599,18 +5610,20 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox Inventory;
         private System.Windows.Forms.Label InventroyLabel;
-        private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label MeatLabel;
-        private System.Windows.Forms.ProgressBar WoodStorageBar;
         private System.Windows.Forms.Label WoodStorageLabel;
         private System.Windows.Forms.ProgressBar WoodShortageBar;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button BuySellButton;
         private System.Windows.Forms.Label WoodPriceLabel;
         private System.Windows.Forms.TrackBar WoodTrackBar;
         private System.Windows.Forms.ComboBox WoodBuySellBox;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label WoodNumberLabel;
+        private System.Windows.Forms.Label PopulationLabel;
+        private System.Windows.Forms.ProgressBar WoodStorageBar;
+        private System.Windows.Forms.TabControl Tabs;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox groupBox3;
     }
 }

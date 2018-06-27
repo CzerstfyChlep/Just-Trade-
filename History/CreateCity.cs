@@ -16,8 +16,10 @@ namespace History
         {
             InitializeComponent();
             p = pr;
+            list = Form1.ProductName;
         }
         public static Province p;
+        public static string[] list = new string[] { };
 
         private void PopulationTrackBar_Scroll(object sender, EventArgs e)
         {
@@ -32,7 +34,7 @@ namespace History
         private void CreateCityButton_Click(object sender, EventArgs e)
         {
             Random rand = new Random();
-            foreach (string a in Form1.ProductName)
+            foreach (string a in list)
             {
                 if (a != "tools" && a != "weapons" && a != "ale" && a != "cloth")
                 {
